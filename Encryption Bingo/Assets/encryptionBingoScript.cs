@@ -6,6 +6,8 @@ using KModkit;
 
 public class encryptionBingoScript : MonoBehaviour {
 
+    public KMBossModule BossModule;
+
     //general stuff
     public KMBombInfo bomb;
     public KMAudio audio;

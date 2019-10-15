@@ -6502,6 +6502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4fe0e584f9fb8f146b2b0fde3a643a3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  BossModule: {fileID: 114249927613695232}
   bomb: {fileID: 114603724287505536}
   audio: {fileID: 114794986080306348}
   buttons:
