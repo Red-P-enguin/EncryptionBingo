@@ -7,6 +7,7 @@ using KModkit;
 public class encryptionBingoScript : MonoBehaviour {
 
     public KMBossModule BossModule;
+    public KMBombModule Module;
 
     //general stuff
     public KMBombInfo bomb;
@@ -98,7 +99,8 @@ public class encryptionBingoScript : MonoBehaviour {
     private char[] fontanaNotLetters = { 'J', 'V', 'W' };
     public Material[] asciiMats;
     //boss module stuff
-    public static string[] ignoredModules = null;
+    private static readonly string[] defaultIgnoredModules = @"Divided Squares,Forget Me Not,Forget Everything,Forget This,Hogwarts,Turn The Key,The Time Keeper,Souvenir,The Swan,Simon's Stages,Purgatory,Alchemy,Timing is Everything".Split(',');
+    private string[] ignoredModules;
     private int count = 0;
     private int stage;
     private int ticker;
@@ -109,7 +111,7 @@ public class encryptionBingoScript : MonoBehaviour {
         ballRenderer.transform.localPosition = new Vector3(0.06f, 0.0245f, 0.0215f);
         stageDone = false;
         selLine = UnityEngine.Random.Range(0, 12);
-        numberOfStamps = UnityEngine.Random.Range(5, 10);
+        numberOfStamps = UnityEngine.Random.Range(5, 16);
         stampedStamps.Clear();
         //how many modules can be solved before this one
         count = bomb.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
@@ -302,7 +304,7 @@ public class encryptionBingoScript : MonoBehaviour {
             if (balls == 0 && !done)
             {
                 stageDone = false;
-                balls = UnityEngine.Random.Range(1, 4);
+                balls = UnityEngine.Random.Range(1, 3);
                 DebugMsg("This stage has " + balls + " ball(s).");
             }
             DebugMsg("The next ball is a " + encryptions[encryptionIndex] + " ball.");
@@ -428,32 +430,7 @@ public class encryptionBingoScript : MonoBehaviour {
         if (ignoredModules == null)
         {
             //not sure what this does
-            ignoredModules = GetComponent<KMBossModule>().GetIgnoredModules("Encryption Bingo", new string[]{
-                "Encryption Bingo",
-                "Cookie Jars",
-                "Divided Squares",
-                "Forget Enigma",
-                "Forget Everything",
-                "Forget Me Later",
-                "Forget Me Not",
-                "Forget Perspective",
-                "Forget Them All",
-                "Forget This",
-                "Forget Us Not",
-                "Four-Card Monte",
-                "Hogwarts",
-                "Organization",
-                "Purgatory",
-                "Simon's Stages",
-                "Souvenir",
-                "Tallordered Keys",
-                "The Time Keeper",
-                "The Troll",
-                "Timing is Everything",
-                "Turn The Keys",
-                "The Very Annoying Button",
-                "Übermodule",
-            });
+            ignoredModules = BossModule.GetIgnoredModules(Module, defaultIgnoredModules);
         }
     }
 
@@ -842,7 +819,7 @@ public class encryptionBingoScript : MonoBehaviour {
 
         if (parts.Length == 1)
         {
-            if (parts[0] == "ball")
+            if (parts[0].Equals("ball"))
             {
                 yield return null;
                 yield return new KMSelectable[] { buttons[25] };
@@ -851,7 +828,7 @@ public class encryptionBingoScript : MonoBehaviour {
             {
                 for(int i = 0; i < 25; i++)
                 {
-                    if(buttons[i].name.ToLower() == parts[0].ToLower())
+                    if(buttons[i].name.ToLower().Equals(parts[0].ToLower()))
                     {
                         yield return null;
                         yield return new KMSelectable[] { buttons[i] };
