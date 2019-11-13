@@ -6503,6 +6503,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BossModule: {fileID: 114249927613695232}
+  Module: {fileID: 114316656681253152}
   bomb: {fileID: 114603724287505536}
   audio: {fileID: 114794986080306348}
   buttons:

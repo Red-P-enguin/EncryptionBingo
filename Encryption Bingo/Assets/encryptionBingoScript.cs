@@ -111,7 +111,7 @@ public class encryptionBingoScript : MonoBehaviour {
         ballRenderer.transform.localPosition = new Vector3(0.06f, 0.0245f, 0.0215f);
         stageDone = false;
         selLine = UnityEngine.Random.Range(0, 12);
-        numberOfStamps = UnityEngine.Random.Range(5, 16);
+        numberOfStamps = UnityEngine.Random.Range(12, 16);
         stampedStamps.Clear();
         //how many modules can be solved before this one
         count = bomb.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
