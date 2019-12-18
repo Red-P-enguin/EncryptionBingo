@@ -383,35 +383,38 @@ public class encryptionBingoScript : MonoBehaviour {
 
     void Update()
     {
-        ticker++;
-        if(ticker == 15)
+        if (!moduleSolved)
         {
-            //every 15 things i don't know i literally just ctrl+c and ctrl+v'd this from forget enigma it's not plagurism it's being resourceful
-            ticker = 0;
-            int progress = bomb.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
-            if (progress > stage && !done && !moduleSolved)
+            ticker++;
+            if(ticker == 15)
             {
-                DebugMsg("A module was solved.");
-                stage++;
-                if (stageDone == false)
+                //every 15 things i don't know i literally just ctrl+c and ctrl+v'd this from forget enigma it's not plagurism it's being resourceful
+                ticker = 0;
+                int progress = bomb.GetSolvedModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
+                if (progress > stage && !done && !moduleSolved)
                 {
-                    GetComponent<KMBombModule>().HandleStrike();
-                    DebugMsg("Not all active balls were stamped. Module striked.");
-                }
-                if (stage >= count)
-                {
-                    DebugMsg("All modules solved. Now releasing multiple balls until solved.");
-                    done = true;
-                    stage = 0;
-                    if (ballOut == false)
+                    DebugMsg("A module was solved.");
+                    stage++;
+                    if (stageDone == false)
                     {
+                        GetComponent<KMBombModule>().HandleStrike();
+                        DebugMsg("Not all active balls were stamped. Module striked.");
+                    }
+                    if (stage >= count)
+                    {
+                        DebugMsg("All modules solved. Now releasing multiple balls until solved.");
+                        done = true;
+                        stage = 0;
+                        if (ballOut == false)
+                        {
+                            ChooseBall();
+                        }
+                    }
+                    else if (stageDone == true)
+                    {
+                        DebugMsg("All active balls stamped. Releasing next ball.");
                         ChooseBall();
                     }
-                }
-                else if (stageDone == true)
-                {
-                    DebugMsg("All active balls stamped. Releasing next ball.");
-                    ChooseBall();
                 }
             }
         }
