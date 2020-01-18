@@ -86,7 +86,6 @@ public class encryptionBingoScript : MonoBehaviour {
     private int arrowVert = 0;
     public Material listeningMat;
     public string[] listeningNames;
-    private int[] listeningLength = { 4,};
     public AudioClip[] listeningClips;
     public Material[] numberMats;
     public Material[] chineseNumberMats;
@@ -108,10 +107,15 @@ public class encryptionBingoScript : MonoBehaviour {
 
     void Start ()
     {
+        if (ignoredModules == null)
+        {
+            ignoredModules = BossModule.GetIgnoredModules(Module, defaultIgnoredModules);
+            Debug.LogFormat(@"<Divided Squares #{0}> Ignored modules: {1}", ModuleId, ignoredModules.Join(", "));
+        }
         ballRenderer.transform.localPosition = new Vector3(0.06f, 0.0245f, 0.0215f);
         stageDone = false;
         selLine = UnityEngine.Random.Range(0, 12);
-        numberOfStamps = UnityEngine.Random.Range(12, 16);
+        numberOfStamps = UnityEngine.Random.Range(0, 6) + 12;
         stampedStamps.Clear();
         //how many modules can be solved before this one
         count = bomb.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
@@ -386,7 +390,7 @@ public class encryptionBingoScript : MonoBehaviour {
         if (!moduleSolved)
         {
             ticker++;
-            if(ticker == 15)
+            if (ticker == 15)
             {
                 //every 15 things i don't know i literally just ctrl+c and ctrl+v'd this from forget enigma it's not plagurism it's being resourceful
                 ticker = 0;
@@ -428,12 +432,6 @@ public class encryptionBingoScript : MonoBehaviour {
         {
             KMSelectable pressedButton = button;
             button.OnInteract += delegate () { buttonPressed(pressedButton); return false; };
-        }
-
-        if (ignoredModules == null)
-        {
-            //not sure what this does
-            ignoredModules = BossModule.GetIgnoredModules(Module, defaultIgnoredModules);
         }
     }
 
@@ -809,6 +807,12 @@ public class encryptionBingoScript : MonoBehaviour {
         {
             fontana();
         }
+    }
+
+    IEnumerator TwitchHandleForcedSolve()
+    {
+        yield return null;
+        moduleSolved = true;
     }
 
 #pragma warning disable 414
