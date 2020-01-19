@@ -97,6 +97,7 @@ public class encryptionBingoScript : MonoBehaviour {
     public Material[] fontanaMats;
     private char[] fontanaNotLetters = { 'J', 'V', 'W' };
     public Material[] asciiMats;
+    private List<int> availableLetters = new List<int>();
     //boss module stuff
     private static readonly string[] defaultIgnoredModules = @"Divided Squares,Forget Me Not,Forget Everything,Forget This,Hogwarts,Turn The Key,The Time Keeper,Souvenir,The Swan,Simon's Stages,Purgatory,Alchemy,Timing is Everything".Split(',');
     private string[] ignoredModules;
@@ -110,7 +111,7 @@ public class encryptionBingoScript : MonoBehaviour {
         if (ignoredModules == null)
         {
             ignoredModules = BossModule.GetIgnoredModules(Module, defaultIgnoredModules);
-            Debug.LogFormat(@"<Divided Squares #{0}> Ignored modules: {1}", ModuleId, ignoredModules.Join(", "));
+            Debug.LogFormat(@"<Encryption Bingo #{0}> Ignored modules: {1}", ModuleId, ignoredModules.Join(", "));
         }
         ballRenderer.transform.localPosition = new Vector3(0.06f, 0.0245f, 0.0215f);
         stageDone = false;
@@ -296,6 +297,7 @@ public class encryptionBingoScript : MonoBehaviour {
 
     void ChooseBall() //pretty self explanatory
     {
+        availableLetters.Clear();
         ballOut = true;
         encryptionIndex = UnityEngine.Random.Range(0, 19);
         if (encryptionIndex == 10 && stampedSquares.Count == 0 || encryptionIndex == 12 && stampedSquares.Count == 0 || encryptionIndex == 12 && stampedSquares[stampedSquares.Count - 1] == 24)
@@ -357,26 +359,60 @@ public class encryptionBingoScript : MonoBehaviour {
             }
             if (encryptionIndex == 14)
             {
-                for(int i = 0; i < stampedStamps.Count; i++)
+                for(int i = 0; i < stampedSquares.Count; i++)
                 {
-                    if(cubeNotLetters.Contains(chart3[stampedStamps[i]]) && i == stampedStamps.Count - 1)
+                    if(!cubeNotLetters.Contains(chart3[stampedSquares[i]]))
                     {
-                        ChooseBall();
+                        availableLetters.Add(stampedSquares[i]);
                     }
-                    else
-                    {
-                        i = stampedStamps.Count;
-                        cube();
-                    }
+                }
+                if(availableLetters.Count == 0)
+                {
+                    DebugMsg("Cube Symbols has no valid letters in the selected stamps. Retrying...");
+                    ChooseBall();
+                }
+                else
+                {
+                    cube();
                 }
             }
             if (encryptionIndex == 15)
             {
-                runes();
+                for (int i = 0; i < stampedSquares.Count; i++)
+                {
+                    if (!runeNotLetters.Contains(chart3[stampedSquares[i]]))
+                    {
+                        availableLetters.Add(stampedSquares[i]);
+                    }
+                }
+                if (availableLetters.Count == 0)
+                {
+                    DebugMsg("Runes has no valid letters in the selected stamps. Retrying...");
+                    ChooseBall();
+                }
+                else
+                {
+                    runes();
+                }
             }
             if (encryptionIndex == 17)
             {
-                fontana();
+                for (int i = 0; i < stampedSquares.Count; i++)
+                {
+                    if (!fontanaNotLetters.Contains(chart3[stampedSquares[i]]))
+                    {
+                        availableLetters.Add(stampedSquares[i]);
+                    }
+                }
+                if (availableLetters.Count == 0)
+                {
+                    DebugMsg("Fontana has no valid letters in the selected stamps. Retrying...");
+                    ChooseBall();
+                }
+                else
+                {
+                    fontana();
+                }
             }
             if (encryptionIndex == 2 || encryptionIndex == 3 || encryptionIndex == 4 || encryptionIndex == 5 || encryptionIndex == 6 || encryptionIndex == 7 || encryptionIndex == 8 || encryptionIndex == 9 || encryptionIndex == 16 || encryptionIndex == 18)
             {
