@@ -37,6 +37,7 @@ public class encryptionBingoScript : MonoBehaviour {
     private bool somethingActive = false;
     private bool stageDone = false;
     private bool ballOut = false;
+    private bool tpcorrect = true; //stolen straight from FML
     private string chart1 = "ELWGN" +
                             "ROZTB" +
                             "UDPVC" +
@@ -196,6 +197,11 @@ public class encryptionBingoScript : MonoBehaviour {
         if (whichButtonPressed != correctSquare)
         {
             incorrect = true;
+            tpcorrect = false;
+        }
+        else 
+        {
+            tpcorrect = true;
         }
         if (!incorrect)
         {
@@ -880,8 +886,15 @@ public class encryptionBingoScript : MonoBehaviour {
                     else if(i == 24)
                     {
                         yield break;
+                        return;
                     }
                 }
+                if (tpcorrect)
+                {
+                    if (isSolved()) yield return "solve";
+                    yield return "awardpoints 1";
+                }
+                else yield return "strike";
             }
         }
         else
