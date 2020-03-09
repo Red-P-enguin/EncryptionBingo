@@ -882,19 +882,18 @@ public class encryptionBingoScript : MonoBehaviour {
                         yield return null;
                         yield return new KMSelectable[] { buttons[i] };
                         i = 25;
+                        if (tpcorrect)
+                        {
+                            if (isSolved()) yield return "solve";
+                            yield return "awardpoints 1";
+                        }
+                        else yield return "strike";
                     }
                     else if(i == 24)
                     {
                         yield break;
-                        return;
                     }
                 }
-                if (tpcorrect)
-                {
-                    if (isSolved()) yield return "solve";
-                    yield return "awardpoints 1";
-                }
-                else yield return "strike";
             }
         }
         else
