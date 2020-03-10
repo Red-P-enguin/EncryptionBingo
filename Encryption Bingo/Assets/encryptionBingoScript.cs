@@ -147,6 +147,7 @@ public class encryptionBingoScript : MonoBehaviour {
         else
         {
             ChooseBall();
+            StartCoroutine(ComeHereBall());
         }
     }
 
