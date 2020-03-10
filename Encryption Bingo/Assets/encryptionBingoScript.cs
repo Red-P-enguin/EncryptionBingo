@@ -283,10 +283,12 @@ public class encryptionBingoScript : MonoBehaviour {
                 if (done == true)
                 {
                     ChooseBall();
+                    StartCoroutine(ComeHereBall());
                 }
                 else if (balls > 0)
                 {
                     ChooseBall();
+                    StartCoroutine(ComeHereBall());
                 }
                 else
                 {
@@ -298,6 +300,7 @@ public class encryptionBingoScript : MonoBehaviour {
         {
             incorrect = false;
             ChooseBall();
+            StartCoroutine(ComeHereBall());
         }
     }
 
@@ -312,7 +315,6 @@ public class encryptionBingoScript : MonoBehaviour {
         }
         else
         {
-            StartCoroutine(ComeHereBall());
             if (balls == 0 && !done)
             {
                 stageDone = false;
