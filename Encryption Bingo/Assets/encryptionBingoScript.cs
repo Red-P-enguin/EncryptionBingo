@@ -4,7 +4,8 @@ using System.Linq;
 using UnityEngine;
 using KModkit;
 
-public class encryptionBingoScript : MonoBehaviour {
+public class encryptionBingoScript : MonoBehaviour
+{
 
     public KMBossModule BossModule;
     public KMBombModule Module;
@@ -27,7 +28,7 @@ public class encryptionBingoScript : MonoBehaviour {
     private int selLine = 0;
     private int correctSquare = 0;
     private int balls = 0;
-    private int localRotation = 0;
+    private float localRotation = 0f;
     private int whichButtonPressed = 0;
     private bool animationActive = false;
     private List<int> stampedSquares = new List<int>();
@@ -68,7 +69,7 @@ public class encryptionBingoScript : MonoBehaviour {
                                         { 4,8,12,16,20 }};
     //encryptions
     private string[] encryptions = { "Morse Code", "Tap Code", "Maritime Flags", "Semaphore", "Pigpen", "Lombax", "Braille", "Wingdings", "Zoni", "Galatic Alphabet", "Arrow", "Listening", "Regular Number", "Chinese Number", "Cube Symbols", "Runes", "New York Point", "Fontana", "ASCII Hex Code" };
-    private string[] morseLetters = { ".",".-..",".--","--.","-.",".-.","---","--..","-","-...","..-","-..",".--.","...-","-.-.","-..-","--.-","-.--","..-.","--","....",".-",".---","..","..." };
+    private string[] morseLetters = { ".", ".-..", ".--", "--.", "-.", ".-.", "---", "--..", "-", "-...", "..-", "-..", ".--.", "...-", "-.-.", "-..-", "--.-", "-.--", "..-.", "--", "....", ".-", ".---", "..", "..." };
     public Material[] morseMats;
     private string[] tapLetters = { ". .....", "... .", "..... ..", ".. ..", "... ...", ".... ..", "... ....", "..... .....", ".... ....", ". ..", ".... .....", ". ....", "... .....", "..... .", ". ...", "..... ...", ".... .", "..... ....", ".. .", "... ..", ".. ...", ". .", ".. .....", ".. ....", ".... ..." };
     public Material tapMat;
@@ -91,7 +92,7 @@ public class encryptionBingoScript : MonoBehaviour {
     public Material[] numberMats;
     public Material[] chineseNumberMats;
     public Material[] cubeMats;
-    private char[] cubeNotLetters = { 'R','S','T','U','V','W','Y','Z' };
+    private char[] cubeNotLetters = { 'R', 'S', 'T', 'U', 'V', 'W', 'Y', 'Z' };
     public Material[] runeMats;
     private char[] runeNotLetters = { 'C', 'K', 'Q', 'V', 'W' };
     public Material[] nypMats;
@@ -106,8 +107,13 @@ public class encryptionBingoScript : MonoBehaviour {
     private int stage;
     private int ticker;
     private bool done;
+    //movements
+    private Vector3 ballStart = new Vector3(0.06f, 0.0245f, 0.0215f);
+    private Vector3 ballMiddle = new Vector3(0.06f, 0.0245f, -0.0215f);
+    private Vector3 ballEnd = new Vector3(0.06f, 0.0245f, -0.06f);
+    private Vector3 ballHole = new Vector3(0.06f, 0.0012f, -0.06f);
 
-    void Start ()
+    void Start()
     {
         if (ignoredModules == null)
         {
@@ -137,8 +143,8 @@ public class encryptionBingoScript : MonoBehaviour {
     {
         if (stampedStamps.Count < numberOfStamps)
         {
-            index = UnityEngine.Random.Range(0,24);
-            if(!stampedStamps.Contains(index))
+            index = UnityEngine.Random.Range(0, 24);
+            if (!stampedStamps.Contains(index))
             {
                 stampedStamps.Add(index);
             }
@@ -164,16 +170,15 @@ public class encryptionBingoScript : MonoBehaviour {
         localRotation = 0;
     }
 
-    //animation, localRotation comes from The Cube
     private IEnumerator ComeHereBall()
     {
         animationActive = true;
-        index = UnityEngine.Random.Range(0,3);
-        if(index == 0)
+        index = UnityEngine.Random.Range(0, 3);
+        if (index == 0)
         {
             audio.PlaySoundAtTransform("roll1", transform);
         }
-        else if(index == 1)
+        else if (index == 1)
         {
             audio.PlaySoundAtTransform("roll2", transform);
         }
@@ -181,14 +186,14 @@ public class encryptionBingoScript : MonoBehaviour {
         {
             audio.PlaySoundAtTransform("roll3", transform);
         }
-        while (localRotation != 36)
+        while (localRotation < 1f)
         {
             yield return new WaitForSeconds(.02f);
-            ballRenderer.transform.localPosition = new Vector3(ballRenderer.transform.localPosition.x, ballRenderer.transform.localPosition.y, ballRenderer.transform.localPosition.z - 0.001125f);
-            ballRenderer.transform.localRotation = Quaternion.Euler(-5.0f, 0.0f, 0.0f) * ballRenderer.transform.localRotation; ;
-            localRotation++;
+            ballRenderer.transform.localPosition = Vector3.Lerp(ballStart,ballMiddle,localRotation);
+            ballRenderer.transform.localRotation = Quaternion.Euler(-3.6f, 0.0f, 0.0f) * ballRenderer.transform.localRotation; ;
+            localRotation = localRotation + .02f;
         }
-        localRotation = 0;
+        localRotation = 0f;
         animationActive = false;
     }
 
@@ -200,7 +205,7 @@ public class encryptionBingoScript : MonoBehaviour {
             incorrect = true;
             tpcorrect = false;
         }
-        else 
+        else
         {
             tpcorrect = true;
         }
@@ -242,12 +247,12 @@ public class encryptionBingoScript : MonoBehaviour {
         {
             audio.PlaySoundAtTransform("roll3", transform);
         }
-        while (localRotation != 36)
+        while (localRotation < 1f)
         {
             yield return new WaitForSeconds(.02f);
-            ballRenderer.transform.localPosition = new Vector3(ballRenderer.transform.localPosition.x, ballRenderer.transform.localPosition.y, ballRenderer.transform.localPosition.z - 0.001125f);
-            ballRenderer.transform.localRotation = Quaternion.Euler(-5.0f, 0.0f, 0.0f) * ballRenderer.transform.localRotation; ;
-            localRotation++;
+            ballRenderer.transform.localPosition = Vector3.Lerp(ballMiddle, ballEnd, localRotation);
+            ballRenderer.transform.localRotation = Quaternion.Euler(-3.6f, 0.0f, 0.0f) * ballRenderer.transform.localRotation; ;
+            localRotation = localRotation + .02f;
         }
         localRotation = 0;
         index = UnityEngine.Random.Range(0, 2);
@@ -259,14 +264,14 @@ public class encryptionBingoScript : MonoBehaviour {
         {
             audio.PlaySoundAtTransform("thud2", transform);
         }
-        while (localRotation != 5)
+        while (localRotation < 1f)
         {
             yield return new WaitForSeconds(.02f);
-            ballRenderer.transform.localPosition = new Vector3(ballRenderer.transform.localPosition.x, ballRenderer.transform.localPosition.y -0.0049f, ballRenderer.transform.localPosition.z);
-            localRotation++;
+            ballRenderer.transform.localPosition = Vector3.Lerp(ballEnd, ballHole, localRotation);
+            localRotation = localRotation + .2f;
         }
         localRotation = 0;
-        ballRenderer.transform.localPosition = new Vector3(0.06f, 0.0245f, 0.0215f);
+        ballRenderer.transform.localPosition = ballStart;
         yield return new WaitForSeconds(.25f);
         ballOut = false;
         if (!incorrect)
@@ -358,7 +363,7 @@ public class encryptionBingoScript : MonoBehaviour {
             {
                 listening();
             }
-            if(encryptionIndex == 12)
+            if (encryptionIndex == 12)
             {
                 numbers();
             }
@@ -368,14 +373,14 @@ public class encryptionBingoScript : MonoBehaviour {
             }
             if (encryptionIndex == 14)
             {
-                for(int i = 0; i < stampedSquares.Count; i++)
+                for (int i = 0; i < stampedSquares.Count; i++)
                 {
-                    if(!cubeNotLetters.Contains(chart3[stampedSquares[i]]))
+                    if (!cubeNotLetters.Contains(chart3[stampedSquares[i]]))
                     {
                         availableLetters.Add(stampedSquares[i]);
                     }
                 }
-                if(availableLetters.Count == 0)
+                if (availableLetters.Count == 0)
                 {
                     DebugMsg("Cube Symbols has no valid letters in the selected stamps. Retrying...");
                     ChooseBall();
@@ -546,7 +551,7 @@ public class encryptionBingoScript : MonoBehaviour {
     void morseCode()
     {
         //pre-flashy flash flashes for morse
-        index = UnityEngine.Random.Range(0,numberOfStamps);
+        index = UnityEngine.Random.Range(0, numberOfStamps);
         index = stampedStamps[index];
         if (!stampedSquares.Contains(index))
         {
@@ -631,7 +636,7 @@ public class encryptionBingoScript : MonoBehaviour {
                 ballRenderer.material = maritimeMats[index];
                 correctSquare = index;
             }
-            else if(encryptionIndex == 3)
+            else if (encryptionIndex == 3)
             {
                 DebugMsg("The letter in Semaphore is " + chart1[index] + ".");
                 ballRenderer.material = semaphoreMats[index];
@@ -730,11 +735,11 @@ public class encryptionBingoScript : MonoBehaviour {
             arrowHoriz--;
             arrowVert--;
         }
-        if(arrowVert < 0)
+        if (arrowVert < 0)
         {
             arrowVert = arrowVert + 5;
         }
-        if(arrowHoriz < 0)
+        if (arrowHoriz < 0)
         {
             arrowHoriz = arrowHoriz + 5;
         }
@@ -878,9 +883,9 @@ public class encryptionBingoScript : MonoBehaviour {
             }
             else
             {
-                for(int i = 0; i < 25; i++)
+                for (int i = 0; i < 25; i++)
                 {
-                    if(buttons[i].name.ToLower().Equals(parts[0].ToLower()))
+                    if (buttons[i].name.ToLower().Equals(parts[0].ToLower()))
                     {
                         yield return null;
                         yield return new KMSelectable[] { buttons[i] };
@@ -892,7 +897,7 @@ public class encryptionBingoScript : MonoBehaviour {
                         }
                         else yield return "strike";
                     }
-                    else if(i == 24)
+                    else if (i == 24)
                     {
                         yield break;
                     }
