@@ -73,6 +73,7 @@ public class encryptionBingoScript : MonoBehaviour
     public Material[] morseMats;
     private string[] tapLetters = { ". .....", "... .", "..... ..", ".. ..", "... ...", ".... ..", "... ....", "..... .....", ".... ....", ". ..", ".... .....", ". ....", "... .....", "..... .", ". ...", "..... ...", ".... .", "..... ....", ".. .", "... ..", ".. ...", ". .", ".. .....", ".. ....", ".... ..." };
     public Material tapMat;
+    private int tapNum;
     public Material[] maritimeMats;
     public Material[] semaphoreMats;
     public Material[] pigpenMats;
@@ -462,12 +463,14 @@ public class encryptionBingoScript : MonoBehaviour
                         if (ballOut == false)
                         {
                             ChooseBall();
+                            StartCoroutine(ComeHereBall());
                         }
                     }
                     else if (stageDone == true)
                     {
                         DebugMsg("All active balls stamped. Releasing next ball.");
                         ChooseBall();
+                        StartCoroutine(ComeHereBall());
                     }
                 }
             }
@@ -522,7 +525,7 @@ public class encryptionBingoScript : MonoBehaviour
             if (encryptionIndex == 1)
             {
                 //tap sound code
-                StartCoroutine(TapSound(tapLetters[index]));
+                StartCoroutine(TapSound(tapLetters[tapNum]));
             }
             else if (encryptionIndex == 11)
             {
@@ -598,6 +601,7 @@ public class encryptionBingoScript : MonoBehaviour
         {
             DebugMsg("The letter in tap code is " + chart1[index] + ".");
             correctSquare = index;
+            tapNum = index;
         }
         else
         {
