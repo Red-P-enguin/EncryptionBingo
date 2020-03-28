@@ -113,6 +113,9 @@ public class encryptionBingoScript : MonoBehaviour
     private Vector3 ballMiddle = new Vector3(0.06f, 0.0245f, -0.0215f);
     private Vector3 ballEnd = new Vector3(0.06f, 0.0245f, -0.06f);
     private Vector3 ballHole = new Vector3(0.06f, 0.0012f, -0.06f);
+    private Quaternion ballRotationStart = new Quaternion(-0.5f, 0.5f, -0.5f, 0.5f);
+    private Quaternion ballRotationMid = new Quaternion(-0.5f, -0.5f, -0.5f, -0.5f);
+    private Quaternion ballRotationEnd = new Quaternion(0.5f, -0.5f, 0.5f, -0.5f); //got quaternions by playing animation and debug-logging the rotation of the ball
 
     void Start()
     {
@@ -191,7 +194,7 @@ public class encryptionBingoScript : MonoBehaviour
         {
             yield return new WaitForSeconds(.02f);
             ballRenderer.transform.localPosition = Vector3.Lerp(ballStart,ballMiddle,localRotation);
-            ballRenderer.transform.localRotation = Quaternion.Euler(-3.6f, 0.0f, 0.0f) * ballRenderer.transform.localRotation; ;
+            ballRenderer.transform.localRotation = Quaternion.Lerp(ballRotationStart,ballRotationMid,localRotation);
             localRotation = localRotation + .02f;
         }
         localRotation = 0f;
@@ -252,7 +255,7 @@ public class encryptionBingoScript : MonoBehaviour
         {
             yield return new WaitForSeconds(.02f);
             ballRenderer.transform.localPosition = Vector3.Lerp(ballMiddle, ballEnd, localRotation);
-            ballRenderer.transform.localRotation = Quaternion.Euler(-3.6f, 0.0f, 0.0f) * ballRenderer.transform.localRotation; ;
+            ballRenderer.transform.localRotation = Quaternion.Lerp(ballRotationMid, ballRotationEnd, localRotation);
             localRotation = localRotation + .02f;
         }
         localRotation = 0;
@@ -779,8 +782,8 @@ public class encryptionBingoScript : MonoBehaviour
     IEnumerator ListenSound()
     {
         //sounds
-        audio.PlaySoundAtTransform(listeningNames[index], transform);
-        yield return new WaitForSeconds(listeningClips[index].length);
+        audio.PlaySoundAtTransform(listeningNames[correctSquare], transform);
+        yield return new WaitForSeconds(listeningClips[correctSquare].length);
         somethingActive = false;
     }
 
