@@ -207,7 +207,6 @@ public class encryptionBingoScript : MonoBehaviour
         if (whichButtonPressed != correctSquare)
         {
             incorrect = true;
-            tpcorrect = false;
         }
         else
         {
@@ -896,13 +895,14 @@ public class encryptionBingoScript : MonoBehaviour
                     {
                         yield return null;
                         yield return new KMSelectable[] { buttons[i] };
-                        i = 25;
                         if (tpcorrect)
                         {
                             if (isSolved()) yield return "solve";
                             yield return "awardpoints 1";
+                            tpcorrect = false;
                         }
-                        else yield return "strike";
+                        else if (!stampedSquares.Contains(i)) yield return "strike";
+                        i = 25;
                     }
                     else if (i == 24)
                     {
