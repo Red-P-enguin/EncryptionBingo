@@ -502,7 +502,7 @@ public class encryptionBingoScript : MonoBehaviour
             somethingActive = false;
             for (int i = 0; i < 25; i++)
             {
-                if (buttons[i] == pressedButton && !stampedSquares.Contains(i))
+                if (buttons[i] == pressedButton)
                 {
                     whichButtonPressed = i;
                     i = 25;
