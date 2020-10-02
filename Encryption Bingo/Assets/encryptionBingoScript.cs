@@ -318,7 +318,7 @@ public class encryptionBingoScript : MonoBehaviour
         availableLetters.Clear();
         ballOut = true;
         encryptionIndex = UnityEngine.Random.Range(0, 19);
-        if (encryptionIndex == 10 && stampedSquares.Count == 0 || encryptionIndex == 12 && stampedSquares.Count == 0 || encryptionIndex == 12 && stampedSquares[stampedSquares.Count - 1] == 24)
+        if ((encryptionIndex == 10 && stampedSquares.Count == 0) || (encryptionIndex == 12 && numberCheck() == -1))
         {
             ChooseBall();
         }
@@ -788,17 +788,23 @@ public class encryptionBingoScript : MonoBehaviour
 
     void numbers()
     {
-        index = UnityEngine.Random.Range(1, 25);
-        if (!stampedSquares.Contains(stampedSquares[stampedSquares.Count - 1] + index) && stampedSquares[stampedSquares.Count - 1] + index < 25)
-        {
-            correctSquare = stampedSquares[stampedSquares.Count - 1] + index;
-            ballRenderer.material = numberMats[index - 1 + 24 * UnityEngine.Random.Range(0, 5)];
-            DebugMsg("The button the number is telling you to press is " + buttons[correctSquare].name + ".");
-        }
-        else
-        {
-            numbers();
-        }
+        index = numberCheck();
+        correctSquare = index;
+        ballRenderer.material = numberMats[(index - stampedSquares[stampedSquares.Count - 1]) - 1 + (24 * UnityEngine.Random.Range(0, 5))];
+        DebugMsg("The button the number is telling you to press is " + buttons[correctSquare].name + ".");
+    }
+
+    int numberCheck()
+    {
+        if (stampedSquares.Count == 0)
+            return -1;
+        string builder = "";
+        int[] possibleNumbers = new int[25] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 };
+        possibleNumbers = possibleNumbers.Where(x => x > stampedSquares[stampedSquares.Count - 1]).ToArray();
+        possibleNumbers = possibleNumbers.Where(x => !stampedSquares.ToArray().Contains(x)).ToArray().Shuffle();
+        if (possibleNumbers.Length == 0)
+            return -1;
+        return possibleNumbers[0];
     }
 
     void chineseNumbers()
