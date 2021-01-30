@@ -229,6 +229,7 @@ public class encryptionBingoScript : MonoBehaviour
             }
             balls--;
             stampedSquares.Add(whichButtonPressed);
+            stampedStamps.Remove(whichButtonPressed);
             stampLocations[whichButtonPressed].material = stamp;
         }
         else
@@ -560,7 +561,7 @@ public class encryptionBingoScript : MonoBehaviour
     {
         morsecodegoto:
         //pre-flashy flash flashes for morse
-        index = Random.Range(0, numberOfStamps);
+        index = Random.Range(0, stampedStamps.Count);
         index = stampedStamps[index];
         if (!stampedSquares.Contains(index))
         {
