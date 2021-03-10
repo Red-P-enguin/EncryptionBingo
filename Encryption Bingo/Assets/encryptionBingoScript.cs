@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
-using KModkit;
 
 public class encryptionBingoScript : MonoBehaviour
 {
@@ -122,12 +122,12 @@ public class encryptionBingoScript : MonoBehaviour
         if (ignoredModules == null)
         {
             ignoredModules = BossModule.GetIgnoredModules(Module, defaultIgnoredModules);
-            Debug.LogFormat(@"<Encryption Bingo #{0}> Ignored modules: {1}", ModuleId, ignoredModules.Join(", "));
+            DebugMsgSilent("Ignored modules: " + ignoredModules.Join(", "));
         }
         ballRenderer.transform.localPosition = new Vector3(0.06f, 0.0245f, 0.0215f);
         stageDone = false;
-        selLine = UnityEngine.Random.Range(0, 12);
-        numberOfStamps = UnityEngine.Random.Range(0, 6) + 12;
+        selLine = Random.Range(0, 12);
+        numberOfStamps = Random.Range(0, 6) + 12;
         stampedStamps.Clear();
         //how many modules can be solved before this one
         count = bomb.GetSolvableModuleNames().Where(x => !ignoredModules.Contains(x)).Count();
@@ -147,7 +147,7 @@ public class encryptionBingoScript : MonoBehaviour
     {
         if (stampedStamps.Count < numberOfStamps)
         {
-            index = UnityEngine.Random.Range(0, 24);
+            index = Random.Range(0, 24);
             if (!stampedStamps.Contains(index))
             {
                 stampedStamps.Add(index);
@@ -166,7 +166,7 @@ public class encryptionBingoScript : MonoBehaviour
         while (localRotation != 75)
         {
             yield return new WaitForSeconds(.02f);
-            index = UnityEngine.Random.Range(0, 8);
+            index = Random.Range(0, 8);
             bingoText.sprite = bingos[index];
             localRotation++;
         }
@@ -177,7 +177,7 @@ public class encryptionBingoScript : MonoBehaviour
     private IEnumerator ComeHereBall()
     {
         animationActive = true;
-        index = UnityEngine.Random.Range(0, 3);
+        index = Random.Range(0, 3);
         if (index == 0)
         {
             audio.PlaySoundAtTransform("roll1", transform);
@@ -197,7 +197,7 @@ public class encryptionBingoScript : MonoBehaviour
             ballRenderer.transform.localRotation = Quaternion.Lerp(ballRotationStart, ballRotationMid, localRotation);
             localRotation = localRotation + .02f;
         }
-        localRotation = 0f;
+        localRotation = 0;
         animationActive = false;
     }
 
@@ -214,7 +214,7 @@ public class encryptionBingoScript : MonoBehaviour
         }
         if (!incorrect)
         {
-            index = UnityEngine.Random.Range(0, 3);
+            index = Random.Range(0, 3);
             if (index == 0)
             {
                 audio.PlaySoundAtTransform("stamp1", transform);
@@ -229,6 +229,7 @@ public class encryptionBingoScript : MonoBehaviour
             }
             balls--;
             stampedSquares.Add(whichButtonPressed);
+            stampedStamps.Remove(whichButtonPressed);
             stampLocations[whichButtonPressed].material = stamp;
         }
         else
@@ -237,7 +238,7 @@ public class encryptionBingoScript : MonoBehaviour
             DebugMsg("Strike! Pressed " + buttons[whichButtonPressed].name + ", when the correct button was " + buttons[correctSquare].name + ".");
         }
         yield return new WaitForSeconds(.25f);
-        index = UnityEngine.Random.Range(0, 3);
+        index = Random.Range(0, 3);
         if (index == 0)
         {
             audio.PlaySoundAtTransform("roll1", transform);
@@ -258,7 +259,7 @@ public class encryptionBingoScript : MonoBehaviour
             localRotation = localRotation + .02f;
         }
         localRotation = 0;
-        index = UnityEngine.Random.Range(0, 2);
+        index = Random.Range(0, 2);
         if (index == 0)
         {
             audio.PlaySoundAtTransform("thud1", transform);
@@ -317,8 +318,8 @@ public class encryptionBingoScript : MonoBehaviour
     {
         availableLetters.Clear();
         ballOut = true;
-        encryptionIndex = UnityEngine.Random.Range(0, 19);
-        if (encryptionIndex == 10 && stampedSquares.Count == 0 || encryptionIndex == 12 && stampedSquares.Count == 0 || encryptionIndex == 12 && stampedSquares[stampedSquares.Count - 1] == 24)
+        encryptionIndex = Random.Range(0, 19);
+        if (encryptionIndex == 10 && stampedSquares.Count == 0 || encryptionIndex == 12 && numberCheck() == -1)
         {
             ChooseBall();
         }
@@ -327,7 +328,7 @@ public class encryptionBingoScript : MonoBehaviour
             if (balls == 0 && !done)
             {
                 stageDone = false;
-                balls = UnityEngine.Random.Range(1, 3);
+                balls = Random.Range(1, 3);
                 DebugMsg("This stage has " + balls + " ball(s).");
             }
             DebugMsg("The next ball is a " + encryptions[encryptionIndex] + " ball.");
@@ -342,20 +343,20 @@ public class encryptionBingoScript : MonoBehaviour
             }
             if (encryptionIndex == 10)
             {
-                index = UnityEngine.Random.Range(0, 3);
+                index = Random.Range(0, 3);
                 if (index == 0)
                 {
-                    index = UnityEngine.Random.Range(0, 8);
+                    index = Random.Range(0, 8);
                     ballRenderer.material = arrowMats[index];
                 }
                 else if (index == 1)
                 {
-                    index = UnityEngine.Random.Range(0, 8);
+                    index = Random.Range(0, 8);
                     ballRenderer.material = gridlockMats1[index];
                 }
                 else
                 {
-                    index = UnityEngine.Random.Range(0, 8);
+                    index = Random.Range(0, 8);
                     ballRenderer.material = gridlockMats2[index];
                 }
                 arrowHoriz = stampedSquares[stampedSquares.Count - 1] % 5;
@@ -386,7 +387,7 @@ public class encryptionBingoScript : MonoBehaviour
 
                 if (availableLetters.Count <= 0)
                 {
-                    DebugMsg("Cube Symbols has no valid letters in the selected stamps. Retrying...");
+                    DebugMsgSilent("Cube Symbols has no valid letters in the selected stamps. Retrying...");
                     ChooseBall();
                 }
                 else
@@ -406,7 +407,7 @@ public class encryptionBingoScript : MonoBehaviour
 
                 if (availableLetters.Count <= 0)
                 {
-                    DebugMsg("Runes has no valid letters in the selected stamps. Retrying...");
+                    DebugMsgSilent("Runes has no valid letters in the selected stamps. Retrying...");
                     ChooseBall();
                 }
                 else
@@ -426,7 +427,7 @@ public class encryptionBingoScript : MonoBehaviour
 
                 if (availableLetters.Count <= 0)
                 {
-                    DebugMsg("Fontana has no valid letters in the selected stamps. Retrying...");
+                    DebugMsgSilent("Fontana has no valid letters in the selected stamps. Retrying...");
                     ChooseBall();
                 }
                 else
@@ -560,7 +561,7 @@ public class encryptionBingoScript : MonoBehaviour
     {
         morsecodegoto:
         //pre-flashy flash flashes for morse
-        index = UnityEngine.Random.Range(0, numberOfStamps);
+        index = Random.Range(0, stampedStamps.Count);
         index = stampedStamps[index];
         if (!stampedSquares.Contains(index))
         {
@@ -602,7 +603,7 @@ public class encryptionBingoScript : MonoBehaviour
     {
         tapcodegoto:
         //pre-tapping sounds
-        index = UnityEngine.Random.Range(0, stampedStamps.Count);
+        index = Random.Range(0, stampedStamps.Count);
         index = stampedStamps[index];
         if (!stampedSquares.Contains(index))
         {
@@ -638,7 +639,7 @@ public class encryptionBingoScript : MonoBehaviour
     {
         picturegoto:
         //pictures is go here
-        index = UnityEngine.Random.Range(0, stampedStamps.Count);
+        index = Random.Range(0, stampedStamps.Count);
         index = stampedStamps[index];
         if (!stampedSquares.Contains(index))
         {
@@ -773,7 +774,7 @@ public class encryptionBingoScript : MonoBehaviour
     {
         listeninggoto:
         ballRenderer.material = listeningMat;
-        index = UnityEngine.Random.Range(0, stampedStamps.Count);
+        index = Random.Range(0, stampedStamps.Count);
         index = stampedStamps[index];
         if (!stampedSquares.Contains(index))
         {
@@ -798,7 +799,7 @@ public class encryptionBingoScript : MonoBehaviour
     {
         index = numberCheck();
         correctSquare = index;
-        ballRenderer.material = numberMats[(index - stampedSquares[stampedSquares.Count - 1]) - 1 + (24 * UnityEngine.Random.Range(0, 5))];
+        ballRenderer.material = numberMats[(index - stampedSquares[stampedSquares.Count - 1]) - 1 + (24 * Random.Range(0, 5))];
         DebugMsg("The button the number is telling you to press is " + buttons[correctSquare].name + ".");
     }
 
@@ -806,7 +807,6 @@ public class encryptionBingoScript : MonoBehaviour
     {
         if (stampedSquares.Count == 0)
             return -1;
-        string builder = "";
         int[] possibleNumbers = new int[25] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 };
         possibleNumbers = possibleNumbers.Where(x => x > stampedSquares[stampedSquares.Count - 1]).ToArray();
         possibleNumbers = possibleNumbers.Where(x => !stampedSquares.ToArray().Contains(x)).ToArray().Shuffle();
@@ -818,7 +818,7 @@ public class encryptionBingoScript : MonoBehaviour
     void chineseNumbers()
     {
         chinesenumbersgoto:
-        index = UnityEngine.Random.Range(0, stampedStamps.Count);
+        index = Random.Range(0, stampedStamps.Count);
         index = stampedStamps[index];
         ballRenderer.material = chineseNumberMats[index];
         if (!stampedSquares.Contains(index))
@@ -835,8 +835,8 @@ public class encryptionBingoScript : MonoBehaviour
     void cube()
     {
         cubegoto:
-        DebugMsg("This message is used for bug finding purposes. Available letters: " + availableLetters.Count());
-        index = UnityEngine.Random.Range(0, stampedStamps.Count);
+        DebugMsgSilent("This message is used for bug finding purposes. Available letters: " + availableLetters.Count());
+        index = Random.Range(0, stampedStamps.Count);
         index = stampedStamps[index];
         if (!stampedSquares.Contains(index) && !cubeNotLetters.Contains(chart3[index]))
         {
@@ -853,8 +853,8 @@ public class encryptionBingoScript : MonoBehaviour
     void runes()
     {
         runesgoto:
-        DebugMsg("This message is used for bug finding purposes. Available letters: " + availableLetters.Count());
-        index = UnityEngine.Random.Range(0, stampedStamps.Count);
+        DebugMsgSilent("This message is used for bug finding purposes. Available letters: " + availableLetters.Count());
+        index = Random.Range(0, stampedStamps.Count);
         index = stampedStamps[index];
         if (!stampedSquares.Contains(index) && !runeNotLetters.Contains(chart3[index]))
         {
@@ -871,8 +871,8 @@ public class encryptionBingoScript : MonoBehaviour
     void fontana()
     {
         fontanagoto:
-        DebugMsg("This message is used for bug finding purposes. Available letters: " + availableLetters.Count());
-        index = UnityEngine.Random.Range(0, stampedStamps.Count);
+        DebugMsgSilent("This message is used for bug finding purposes. Available letters: " + availableLetters.Count());
+        index = Random.Range(0, stampedStamps.Count);
         index = stampedStamps[index];
         if (!stampedSquares.Contains(index) && !fontanaNotLetters.Contains(chart3[index]))
         {
@@ -889,13 +889,25 @@ public class encryptionBingoScript : MonoBehaviour
     IEnumerator TwitchHandleForcedSolve()
     {
         yield return null;
-        moduleSolved = true;
+        if (done)
+        {
+            while (animationActive) { yield return true; }
+            while (!isSolved())
+            {
+                buttons[correctSquare].OnInteract();
+                while (animationActive && !isSolved()) { yield return true; }
+            }
+            while (!moduleSolved) { yield return true; }
+        }
+        else
+        {
+            moduleSolved = true;
+        }
     }
 
-#pragma warning disable 414
-    //private readonly string TwitchHelpMessage = @"!{0} up [Presses the up arrow button] | !{0} right [Presses the right arrow button] | !{0} down [Presses the down arrow button once] | !{0} left [Presses the left arrow button once] | !{0} left right down up [Chain button presses] | !{0} reset [Resets the module back to the start] | Movement words can be substituted as one letter (Ex. right as r)";
+    #pragma warning disable 414
     private readonly string TwitchHelpMessage = @"!{0} D3 presses button D3. !{0} ball presses the ball. !{0} zoom is a general TP command that lets you see the encryptions better.";
-#pragma warning restore 414
+    #pragma warning restore 414
 
     IEnumerator ProcessTwitchCommand(string cmd)
     {
@@ -941,5 +953,10 @@ public class encryptionBingoScript : MonoBehaviour
     void DebugMsg(string msg)
     {
         Debug.LogFormat("[Encryption Bingo #{0}] {1}", ModuleId, msg);
+    }
+
+    void DebugMsgSilent(string msg)
+    {
+        Debug.LogFormat("<Encryption Bingo #{0}> {1}", ModuleId, msg);
     }
 }
