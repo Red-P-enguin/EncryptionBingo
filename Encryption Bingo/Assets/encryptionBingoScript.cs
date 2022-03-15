@@ -176,6 +176,7 @@ public class encryptionBingoScript : MonoBehaviour
 
     private IEnumerator ComeHereBall()
     {
+        yield return new WaitWhile(() => animationActive);
         animationActive = true;
         index = Random.Range(0, 3);
         if (index == 0)
@@ -203,6 +204,7 @@ public class encryptionBingoScript : MonoBehaviour
 
     private IEnumerator GoAwayBall()
     {
+        yield return new WaitWhile(() => animationActive);
         animationActive = true;
         if (whichButtonPressed != correctSquare)
         {
@@ -231,6 +233,10 @@ public class encryptionBingoScript : MonoBehaviour
             stampedSquares.Add(whichButtonPressed);
             stampedStamps.Remove(whichButtonPressed);
             stampLocations[whichButtonPressed].material = stamp;
+            if (!done && balls == 0)
+            {
+                stageDone = true;
+            }
         }
         else
         {
@@ -278,6 +284,7 @@ public class encryptionBingoScript : MonoBehaviour
         ballRenderer.transform.localPosition = ballStart;
         yield return new WaitForSeconds(.25f);
         ballOut = false;
+        animationActive = false;
         if (!incorrect)
         {
             if (isSolved())
@@ -288,22 +295,10 @@ public class encryptionBingoScript : MonoBehaviour
                 GetComponent<KMBombModule>().HandlePass();
                 StartCoroutine(solvedAnimation());
             }
-            else
+            else if(!stageDone)
             {
-                if (done == true)
-                {
-                    ChooseBall();
-                    StartCoroutine(ComeHereBall());
-                }
-                else if (balls > 0)
-                {
-                    ChooseBall();
-                    StartCoroutine(ComeHereBall());
-                }
-                else
-                {
-                    stageDone = true;
-                }
+                ChooseBall();
+                StartCoroutine(ComeHereBall());
             }
         }
         else
@@ -325,7 +320,7 @@ public class encryptionBingoScript : MonoBehaviour
         }
         else
         {
-            if (balls == 0 && !done)
+            if (balls == 0)
             {
                 stageDone = false;
                 balls = Random.Range(1, 3);
@@ -458,8 +453,9 @@ public class encryptionBingoScript : MonoBehaviour
                     stage++;
                     if (stageDone == false)
                     {
-                        GetComponent<KMBombModule>().HandleStrike();
-                        DebugMsg("Not all active balls were stamped. Module striked.");
+                        DebugMsg("Not all active balls were stamped. Adding more balls.");
+                        balls += Random.Range(1, 3);
+                        DebugMsg("There are now " + balls + " balls.");
                     }
                     if (stage >= count)
                     {
@@ -497,7 +493,7 @@ public class encryptionBingoScript : MonoBehaviour
     void buttonPressed(KMSelectable pressedButton)
     {
         pressedButton.AddInteractionPunch();
-        if (moduleSolved || balls == 0 && done != true || animationActive == true)
+        if (moduleSolved || balls == 0 && !done || animationActive)
         {
             return;
         }
