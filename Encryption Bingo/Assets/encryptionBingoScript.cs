@@ -68,7 +68,7 @@ public class encryptionBingoScript : MonoBehaviour
                                         { 0,6,12,18,24 },
                                         { 4,8,12,16,20 }};
     //encryptions
-    private string[] encryptions = { "Morse Code", "Tap Code", "Maritime Flags", "Semaphore", "Pigpen", "Lombax", "Braille", "Wingdings", "Zoni", "Galatic Alphabet", "Arrow", "Listening", "Regular Number", "Chinese Number", "Cube Symbols", "Runes", "New York Point", "Fontana", "ASCII Hex Code" };
+    private string[] encryptions = { "Morse Code", "Tap Code", "Maritime Flags", "Semaphore", "Pigpen", "Lombax", "Braille", "Wingdings", "Zoni", "Galatic", "Arrow", "Listening", "Regular Number", "Chinese Number", "Cube Symbols", "Runes", "New York Point", "Fontana", "ASCII Hex Code" };
     private string[] morseLetters = { ".", ".-..", ".--", "--.", "-.", ".-.", "---", "--..", "-", "-...", "..-", "-..", ".--.", "...-", "-.-.", "-..-", "--.-", "-.--", "..-.", "--", "....", ".-", ".---", "..", "..." };
     public Material[] morseMats;
     private string[] tapLetters = { ". .....", "... .", "..... ..", ".. ..", "... ...", ".... ..", "... ....", "..... .....", ".... ....", ". ..", ".... .....", ". ....", "... .....", "..... .", ". ...", "..... ...", ".... .", "..... ....", ".. .", "... ..", ".. ...", ". .", ".. .....", ".. ....", ".... ..." };
